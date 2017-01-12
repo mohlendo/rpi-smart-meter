@@ -1,21 +1,18 @@
 const Reader = require('ehz-sml-reader')
-const _ = require('lodash')
-const Influx2 = require('influxdb-nodejs');
-const client = new Influx2('http://influxdb:8086/test')
+const Influx = require('influxdb-nodejs')
+const client = new Influx('http://influxdb:8086/test')
 
-function write(options, msg) {
+const name = 'Haushalt'
+new Reader({ port: '/dev/ttyUSB0'}).on('data', (msg) => {
+    console.log(name, msg.total)
+    
     client.write('login')
     .tag({
-      meter: options.name  
+      meter: name  
     })
     .field({
-      meter: options.name, value: msg.total
+      meter: name, value: msg.total
     })
     .queue()
     client.syncWrite()
-}
-
-new Reader({ port: '/dev/ttyUSB0', name: 'Haushalt' }).on('data', (msg) => {
-    console.log(options.name, msg.total)
-    write(options, msg)
   })
