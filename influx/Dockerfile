@@ -10,7 +10,7 @@ VOLUME /var/lib/influxdb
 
 RUN chmod +x /usr/bin/influx*
 
-ENV PRE_CREATE_DB **None**
+ENV PRE_CREATE_DB home
 ENV SSL_SUPPORT **False**
 ENV SSL_CERT **None**
 ENV INFLUXDB_INIT_USER root

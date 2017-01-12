@@ -1,8 +1,8 @@
 const Reader = require('ehz-sml-reader')
 const Influx = require('influxdb-nodejs')
-const client = new Influx('http://influxdb:8086/test')
+const client = new Influx('http://influxdb:8086/home')
 
-const name = 'Haushalt'
+const name = 'household'
 new Reader({ port: '/dev/ttyUSB0'}).on('data', (msg) => {
     console.log(name, msg.total)
     
