@@ -11,6 +11,9 @@ VOLUME /var/lib/influxdb
 
 RUN chmod +x /usr/bin/influx*
 
+ENV INFLUXDB_INIT_USER root
+ENV INFLUXDB_INIT_PWD root
+
 # Admin server
 EXPOSE 8083
 # HTTP API
