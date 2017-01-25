@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "ehz-sml-reader": "^1.0.1",
+    "ehz-sml-reader": "^2.0.1",
     "influxdb-nodejs": "^2.4.2"
   }
 }

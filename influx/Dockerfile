@@ -1,6 +1,6 @@
 FROM resin/rpi-raspbian:jessie
 
-ENV INFLUXDB_VERSION 1.1.1
+ENV INFLUXDB_VERSION 1.2.0
 
 RUN apt-get update && apt-get install wget
 RUN wget -q https://dl.influxdata.com/influxdb/releases/influxdb-${INFLUXDB_VERSION}_linux_armhf.tar.gz && \
