@@ -39,8 +39,8 @@ func splitMsg(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	return 0, nil, nil
 }
 
-func parseMsg(msg []byte) {
-	log.Printf("%x\n", msg)
+func parseMsg(clnt client.Client, msg []byte) {
+	// log.Printf("%x\n", msg)
 	var fields = make(map[string]interface{})
 	for _, m := range measurements {
 		if i := bytes.Index(msg, m.pattern); i > 0 {
@@ -58,20 +58,15 @@ func parseMsg(msg []byte) {
 	}
 	log.Printf("fields: %v", fields)
 	if len(fields) > 0 {
-		writePoints(fields)
+		writePoints(clnt, fields)
 	}
 }
 
-func writePoints(fields map[string]interface{}) {
-	clnt, err := client.NewHTTPClient(client.HTTPConfig{Addr: "http://influxdb:8086"})
-	if err != nil {
-		log.Fatal(err)
-	}
+func writePoints(clnt client.Client, fields map[string]interface{}) {
 	bp, err := client.NewBatchPoints(client.BatchPointsConfig{Database: "home"})
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// Create a point and add to batch
 	tags := map[string]string{"meter": "household"}
 	pt, err := client.NewPoint("power_consumption", tags, fields, time.Now())
@@ -91,12 +86,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	clnt, err := client.NewHTTPClient(client.HTTPConfig{Addr: "http://influxdb:8086"})
+	if err != nil {
+		log.Fatal(err)
+	}
 	reader := bufio.NewReader(s)
 	scanner := bufio.NewScanner(reader)
 	scanner.Buffer(make([]byte, 2048), 4*1024)
 	scanner.Split(splitMsg)
 
 	for scanner.Scan() {
-		go parseMsg(scanner.Bytes())
+		go parseMsg(clnt, scanner.Bytes())
 	}
 }
