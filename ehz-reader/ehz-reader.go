@@ -41,7 +41,7 @@ func splitMsg(data []byte, atEOF bool) (advance int, token []byte, err error) {
 
 func parseMsg(clnt client.Client, msg []byte) {
 	// log.Printf("%x\n", msg)
-	var fields = make(map[string]interface{})
+	fields := make(map[string]interface{})
 	for _, m := range measurements {
 		if i := bytes.Index(msg, m.pattern); i > 0 {
 			l := len(m.pattern)
@@ -58,21 +58,16 @@ func parseMsg(clnt client.Client, msg []byte) {
 	}
 	log.Printf("fields: %v", fields)
 	if len(fields) > 0 {
-		writePoints(clnt, fields)
+		writePoints(clnt, &fields)
 	}
 }
 
-func writePoints(clnt client.Client, fields map[string]interface{}) {
-	bp, err := client.NewBatchPoints(client.BatchPointsConfig{Database: "home"})
-	if err != nil {
-		log.Fatal(err)
-	}
+func writePoints(clnt client.Client, fields *map[string]interface{}) {
+	bp, _ := client.NewBatchPoints(client.BatchPointsConfig{Database: "home"})
+
 	// Create a point and add to batch
 	tags := map[string]string{"meter": "household"}
-	pt, err := client.NewPoint("power_consumption", tags, fields, time.Now())
-	if err != nil {
-		log.Fatal(err)
-	}
+	pt, _ := client.NewPoint("power_consumption", tags, *fields, time.Now())
 	bp.AddPoint(pt)
 
 	if err := clnt.Write(bp); err != nil {
